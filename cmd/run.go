@@ -7,23 +7,11 @@ import (
 	"syscall"
 )
 
-func Run() {
-	cmd := exec.Command("/bin/ash")
+func Run(args []string) {
+	cmd := exec.Command("/proc/self/exe", append([]string{"child"}, args...)...)
 
-	rootfs := "<rootfs-path>"
-
-	if err := syscall.Chroot(rootfs); err != nil {
-		fmt.Print("Syscall Error", err)
-		return
-	}
-
-	if err := os.Chdir("/"); err != nil {
-
-		fmt.Print("Chdir Error", err)
-		return
-	}
 	cmd.SysProcAttr = &syscall.SysProcAttr{
-		Cloneflags: syscall.CLONE_NEWPID | syscall.CLONE_NEWUTS,
+		Cloneflags: syscall.CLONE_NEWPID | syscall.CLONE_NEWUTS | syscall.CLONE_NEWNS,
 	}
 
 	cmd.Stderr = os.Stderr

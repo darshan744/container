@@ -15,7 +15,7 @@ func Child() {
 	cmd.Stdout = os.Stdout
 	cmd.Stdin = os.Stdin
 
-	rootfs := "<rootfs-location>"
+	rootfs := "/home/darshan/Projects/GO/rootfs/"
 
 	if err := syscall.Chroot(rootfs); err != nil {
 		fmt.Print("Syscall Error", err)
@@ -33,10 +33,27 @@ func Child() {
 		fmt.Print("Proc Syscall Error ", err)
 		return
 	}
+
+	syscall.Sethostname([]byte("Container"))
+
+	syscall.Unmount("sysfs", 0)
+
+	// err = syscall.Mount("sysfs", "/sys", "sysfs", 0, "")
+	// if err != nil {
+	// 	fmt.Print("sysfs Syscall Error ", err)
+	// 	return
+	// }
+	err = syscall.Mount("tmpfs", "/tmp", "tmpfs", 0, "")
+	if err != nil {
+		fmt.Print("tempfs Syscall Error ", err)
+		return
+	}
 	err = cmd.Run()
 
 	if err != nil {
 		fmt.Print("Child run error ", err)
 		return
 	}
+
+	syscall.Unmount("proc", 0)
 }

@@ -11,10 +11,14 @@ func main() {
 
 	switch args[0] {
 	case "run":
-		cmd.Run(args[1:])
+		{
+			cmd.Run(args[1:])
+		}
 
 	case "child":
-		cmd.Child()
+		{
+			cmd.Child()
+		}
 	}
 
 }
